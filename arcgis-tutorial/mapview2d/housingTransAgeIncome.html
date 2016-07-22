@@ -39,9 +39,7 @@
                     "dojo/on",
                     "dojo/domReady!"
                 ],
-                function(
-                        Map, SceneView, TileLayer, dom, on
-                ) {
+                function (Map, SceneView, TileLayer, dom, on) {
 
                     /*****************************************************************
                      * Create two TileLayer instances. One pointing to a
@@ -96,14 +94,14 @@
                         container: "viewDiv",
                         map: map,
                         scale: 14,
-                        center: [ -95.249, 38.954]
+                        center: [-95.249, 38.954]
                     });
 
                     /*****************************************************************
                      * The map handles the layers' data while the view and layer views
                      * take care of renderering the layers
                      *****************************************************************/
-                    view.on("layerview-create", function(evt) {
+                    view.on("layerview-create", function (evt) {
                         if (evt.layer.id === "usa-housing") {
                             // Explore the properties of the population layer's layer view here
                             console.log("LayerView for male population created!", evt.layerView);
@@ -122,7 +120,7 @@
                         }
                         view.goTo({
                             scale: 1000,
-                            center: [ -117.735548, 33.653222]
+                            center: [-117.735548, 33.653222]
                         });
                     });
 
@@ -131,17 +129,17 @@
                      * properties may be accessed. Once the population layer has loaded,
                      * the view will animate to it's initial extent.
                      *****************************************************************/
-                    view.then(function() {
-                        housingLyr.then(function() {
+                    view.then(function () {
+                        housingLyr.then(function () {
                             view.goTo(housingLyr.fullExtent);
                         });
-                        incomeLyr.then(function() {
+                        incomeLyr.then(function () {
                             view.goTo(incomeLyr.fullExtent);
                         });
-                        transportationLyr.then(function() {
+                        transportationLyr.then(function () {
                             view.goTo(transportationLyr.fullExtent);
                         });
-                        ageLyr.then(function() {
+                        ageLyr.then(function () {
                             view.goTo(ageLyr.fullExtent);
                         });
                     });
@@ -157,16 +155,16 @@
                      * the layer is still part of the map, which means you can access
                      * its properties and perform analysis even though it isn't visible.
                      *******************************************************************/
-                    on(transportationLyrToggle, "change", function() {
+                    on(transportationLyrToggle, "change", function () {
                         transportationLyr.visible = transportationLyrToggle.checked;
                     });
-                    on(housingLyrToggle, "change", function() {
+                    on(housingLyrToggle, "change", function () {
                         housingLyr.visible = housingLyrToggle.checked;
                     });
-                    on(ageLyrToggle, "change", function() {
+                    on(ageLyrToggle, "change", function () {
                         ageLyr.visible = ageLyrToggle.checked;
                     });
-                    on(incomeLyrToggle, "change", function() {
+                    on(incomeLyrToggle, "change", function () {
                         incomeLyr.visible = incomeLyrToggle.checked;
                     });
 
@@ -179,7 +177,7 @@
   <span id="layerToggle">
 
     <input type="checkbox" id="transportationLyr" checked> Transportation
-    <input type="checkbox" id="housingLyr" > Housing
+    <input type="checkbox" id="housingLyr"> Housing
     <input type="checkbox" id="ageLyr"> Median Age
     <input type="checkbox" id="incomeLyr"> Income
   </span>
