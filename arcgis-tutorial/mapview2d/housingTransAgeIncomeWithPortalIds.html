@@ -176,17 +176,17 @@
                     id: portalItemId
                 }
             }).then(function addLayer(lyr) {
-                console.log('found the layer [' + layerName + '] with portal ID ' + portalItemId)
-                layerObj = lyr;
-                _map.add(layerObj);
-                var layerObjToggle = _dom.byId(layerName);
-                _on(layerObjToggle, "change", function () {
-                    layerObj.visible = layerObjToggle.checked;
-                });
-            })
-            .otherwise(function rejection(err) {
-                // console.log("Layer failed to load: ", err);  Ignore!  Gets called even after then() runs
-            });
+                        console.log('found the layer [' + layerName + '] with portal ID ' + portalItemId)
+                        layerObj = lyr;
+                        _map.add(layerObj);
+                        var layerObjToggle = _dom.byId(layerName);
+                        _on(layerObjToggle, "change", function () {
+                            layerObj.visible = layerObjToggle.checked;
+                        });
+                    })
+                    .otherwise(function rejection(err) {
+                        // console.log("Layer failed to load: ", err);  Ignore!  Gets called even after then() runs
+                    });
         }
     </script>
 </head>
@@ -200,7 +200,7 @@
     <input type="checkbox" id="ageLyr"> Median Age
     <input type="checkbox" id="incomeLyr"> Income
     <input type="checkbox" id="ppldLayerObj"> Poverty, political alignment, poverty level
-      <input type="checkbox" id="medianHomeValueLayerObj"> Median Home Value
+      <!--<input type="checkbox" id="medianHomeValueLayerObj"> Median Home Value-->
  </span>
 </body>
 </html>
