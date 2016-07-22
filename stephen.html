@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Stephens Test Map</title>
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.0/"></script>
+
+    <script>
+        require([
+            "dojo/dom-construct",
+            "esri/Map",
+            //This is used for the logo
+            "esri/views/SceneView",
+            //This is the widget used for the home button
+            "esri/widgets/Home",
+            "dojo/domReady!"
+            //Make sure to dump required items into function
+        ], function(domConstruct, Map, SceneView, Home) {
+
+            var logo = domConstruct.create("img", {
+                src: "https://cdn.mlhdocs.com/adc_cms/images/homepage/ten-x-logo-dark.png",
+                id: "logo",
+                title: "logo"
+            });
+
+            var map = new Map({
+                basemap: "streets",
+                ground: "world-elevation"
+            });
+
+            //This is for the logo
+
+
+            var view = new SceneView({
+                container: "viewDiv",
+                map: map,
+                scale: 5000,
+                //This is the center of the map. First goes Longitude and Second goes Latitude
+                center: [ -117.735548, 33.653222]
+            });
+
+            //This is for the home function
+            var homeBtn = new Home({
+                view: view
+            });
+
+            //Home button startup
+            homeBtn.startup();
+
+            //home button location
+            view.ui.add(homeBtn, "top-left");
+
+            //This is for the logo location
+            view.ui.add(logo, "bottom-right");
+        });
+    </script>
+</head>
+
+<body>
+<div id="viewDiv"></div>
+</body>
+</html>

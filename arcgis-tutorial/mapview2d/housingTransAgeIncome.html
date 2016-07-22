@@ -52,13 +52,14 @@
                         url: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer",
                         // This property can be used to uniquely identify the layer
                         id: "world-streets",
-                        visible: false
+                        visible: true
                     });
 
                     var housingLyr = new TileLayer({
                         url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Population_Density/MapServer',
                         id: "usa-housing",
-                        opacity: 0.9
+                        opacity: 0.9,
+                        visible: false
                     });
 
                     var incomeLyr = new TileLayer({
@@ -79,14 +80,14 @@
                      * Layers may be added to the map in the map's constructor
                      *****************************************************************/
                     var map = new Map({
-                        basemap: "oceans",
-                        layers: [housingLyr]
+                        basemap: "streets",
+                        layers: [transportationLyr]
                     });
 
                     /*****************************************************************
                      * Or they may be added to the map using map.add()
                      *****************************************************************/
-                    map.add(transportationLyr);
+//                    map.add(transportationLyr);
                     map.add(housingLyr);
                     map.add(incomeLyr);
                     map.add(ageLyr);
@@ -94,8 +95,8 @@
                     var view = new SceneView({
                         container: "viewDiv",
                         map: map,
-                        scale: 5000,
-                        center: [ -117.735548, 33.653222]
+                        scale: 14,
+                        center: [ -95.249, 38.954]
                     });
 
                     /*****************************************************************
@@ -119,6 +120,10 @@
                             // Explore the properties of the transportation layer's layer view here
                             console.log("LayerView for age created!", evt.layerView);
                         }
+                        view.goTo({
+                            scale: 1000,
+                            center: [ -117.735548, 33.653222]
+                        });
                     });
 
                     /*****************************************************************
@@ -164,6 +169,7 @@
                     on(incomeLyrToggle, "change", function() {
                         incomeLyr.visible = incomeLyrToggle.checked;
                     });
+
                 });
     </script>
 </head>
@@ -172,8 +178,8 @@
 <div id="viewDiv"></div>
   <span id="layerToggle">
 
-    <input type="checkbox" id="transportationLyr"> Transportation
-    <input type="checkbox" id="housingLyr" checked> Housing
+    <input type="checkbox" id="transportationLyr" checked> Transportation
+    <input type="checkbox" id="housingLyr" > Housing
     <input type="checkbox" id="ageLyr"> Median Age
     <input type="checkbox" id="incomeLyr"> Income
   </span>
