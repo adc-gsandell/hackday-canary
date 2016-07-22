@@ -6,7 +6,6 @@
     <title>Get started with MapView - Create a 2D map</title>
     <link rel="stylesheet" href="https://js.arcgis.com/4.0/esri/css/main.css">
     <script src="https://js.arcgis.com/4.0/"></script>
-    <script src="https://js.arcgis.com/4.0/"></script>
 
     <style>
         html,
@@ -32,6 +31,7 @@
 
     <script>
         require([
+            "dojo/dom-construct",
             "esri/Map",
             "esri/views/SceneView",
             "esri/layers/TileLayer",
@@ -41,12 +41,19 @@
             "dojo/domReady!"
         ], mainApp);
 
-        function mainApp(Map, SceneView, TileLayer, Layer, dom, on) {
+
+        function mainApp(domConstruct, Map, SceneView, TileLayer, Layer, dom, on, domReady) {
 
             var ppldLayerObj;   // used later
             var ppldLayerName = 'ppld'
-            var medianHomeValueLayerObj;   // used later
+            var medianHomeValueLyr;   // used later
             var mediaHomeValueLayerName = 'mhv'
+
+            var logo = domConstruct.create("img", {
+                src: "https://cdn.mlhdocs.com/adc_cms/images/homepage/ten-x-logo-dark.png",
+                id: "logo",
+                title: "logo"
+            });
 
             /*****************************************************************
              * Create two TileLayer instances. One pointing to a
@@ -78,7 +85,11 @@
                 id: "median-age",
                 visible: false
             });
-
+            var popLyr = new TileLayer({
+                url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Projected_Population_Change/MapServer',
+                id: "pop",
+                visible: false
+            });
 
             console.log('transportationLyr = ', transportationLyr, ', housingLyr = ', housingLyr, ', ageLyr = ', ageLyr)
 
@@ -98,9 +109,10 @@
             map.add(housingLyr);
             map.add(incomeLyr);
             map.add(ageLyr);
+            map.add(popLyr);
 
-            addByPortalItem(Layer, map, dom, on, "8444e275037549c1acab02d2626daaee", ppldLayerObj, ppldLayerName)
-//            addByPortalItem(Layer, map, dom, on, "eb4deb0ebcf9448495fcdc2be48ed345", medianHomeValueLayerObj, mediaHomeValueLayerName)
+//            addByPortalItem(Layer, map, dom, on, "8444e275037549c1acab02d2626daaee", ppldLayerObj, ppldLayerName)
+//            addByPortalItem(Layer, map, dom, on, "eb4deb0ebcf9448495fcdc2be48ed345", medianHomeValueLyr, mediaHomeValueLayerName)
 
             var view = new SceneView({
                 container: "viewDiv",
@@ -130,6 +142,10 @@
                     // Explore the properties of the transportation layer's layer view here
                     console.log("LayerView for age created!", evt.layerView);
                 }
+                if (evt.layer.id === "pop") {
+                    // Explore the properties of the transportation layer's layer view here
+                    console.log("LayerView for population trends created!", evt.layerView);
+                }
                 view.goTo({
                     scale: 1000,
                     center: [-117.735548, 33.653222]
@@ -143,12 +159,14 @@
              *****************************************************************/
             view.then(function () {
                 console.log('in view.then()')
+                view.ui.add(logo, "bottom-right");
             });
 
             var transportationLyrToggle = dom.byId("transportationLyr");
             var incomeLyrToggle = dom.byId("incomeLyr");
             var housingLyrToggle = dom.byId("housingLyr");
             var ageLyrToggle = dom.byId("ageLyr");
+            var popLyrToggle = dom.byId("popLyr");
 
             /*****************************************************************
              * The visible property on the layer can be used to toggle the
@@ -168,6 +186,10 @@
             on(incomeLyrToggle, "change", function () {
                 incomeLyr.visible = incomeLyrToggle.checked;
             });
+            on(popLyrToggle, "change", function () {
+                popLyr.visible = popLyrToggle.checked;
+            });
+
 
         }
         function addByPortalItem(_Layer, _map, _dom, _on, portalItemId, layerObj, layerName) {
@@ -181,6 +203,7 @@
                         _map.add(layerObj);
                         var layerObjToggle = _dom.byId(layerName);
                         _on(layerObjToggle, "change", function () {
+                            console.log('change')
                             layerObj.visible = layerObjToggle.checked;
                         });
                     })
@@ -199,8 +222,9 @@
     <input type="checkbox" id="housingLyr"> Housing
     <input type="checkbox" id="ageLyr"> Median Age
     <input type="checkbox" id="incomeLyr"> Income
-    <input type="checkbox" id="ppldLayerObj"> Poverty, political alignment, poverty level
-      <!--<input type="checkbox" id="medianHomeValueLayerObj"> Median Home Value-->
+    <!--<input type="checkbox" id="ppldLayerObj"> Poverty, political alignment, poverty level-->
+    <input type="checkbox" id="popLyr"> Projected Population Change
+      <!--<input type="checkbox" id="medianHomeValueLyr"> Median Home Value-->
  </span>
 </body>
 </html>
