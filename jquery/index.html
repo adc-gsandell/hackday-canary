@@ -8,6 +8,7 @@
         function getToken(callback) {
             $.post({
                 url: 'https://www.arcgis.com/sharing/rest/oauth2/token/',
+                dataType: 'json',
                 data: {
                     'f': 'json',
                     'client_id': '6t2Yl4MYyUh5WESK',
@@ -16,13 +17,16 @@
                     'expiration': '1440'
                 },
                 success: function(error, response, body){
-                    console.log(body.access_token);
-                    callback(body.access_token);
+                    callback(JSON.parse(body.responseText));
+                },
+                error: function() {
+                    console.log('token retrieval error')
                 }
             });
         }
         getToken(function(access_token) {
-            console.log('token = ' + access_token);
+            alert('token = ' + access_token.access_token)
+            console.log('token = ' + access_token.access_token);
         });
     </script>
 </head>
