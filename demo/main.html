@@ -41,62 +41,51 @@
             "dojo/domReady!"
         ], mainApp);
 
+        var populationLogo, populationLyr, incomeLyr, ageLyr, populationChangeLyr;
 
-        function mainApp(domConstruct, Map, SceneView, TileLayer, Layer, dom, on, domReady) {
+        function mainApp(domConstruct, Map, SceneView, TileLayer, Layer, dom, on, domReadyw) {
 
             var ppldLayerObj;   // used later
             var ppldLayerName = 'ppld'
             var medianHomeValueLyr;   // used later
             var mediaHomeValueLayerName = 'mhv'
 
-            var logo = domConstruct.create("img", {
-                src: "https://cdn.mlhdocs.com/adc_cms/images/homepage/ten-x-logo-dark.png",
-                id: "logo",
-                title: "logo"
-            });
-
             /*****************************************************************
              * Create two TileLayer instances. One pointing to a
              * cached map service depicting U.S. male population and the other
              * pointing to a layer of roads and highways.
              *****************************************************************/
-            var roadDetailLyr = new TileLayer({
-                url: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer",
-                // This property can be used to uniquely identify the layer
-                id: "world-streets",
-                visible: true
-            });
-
-            var populationLyr = new TileLayer({
+            populationLyr = new TileLayer({
                 url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Population_Density/MapServer',
                 id: "usa-population",
+                legendEnabled: true,
                 opacity: 0.9,
                 visible: false
             });
 
-            var incomeLyr = new TileLayer({
+            incomeLyr = new TileLayer({
                 url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Median_Household_Income/MapServer',
                 id: "usa-income",
                 visible: false
             });
 
-            var ageLyr = new TileLayer({
+            ageLyr = new TileLayer({
                 url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Median_Age/MapServer',
                 id: "median-age",
                 visible: false
             });
-            var popLyr = new TileLayer({
+            populationChangeLyr = new TileLayer({
                 url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Projected_Population_Change/MapServer',
-                id: "pop",
+                id: "pop-change",
                 visible: false
             });
-            var crimeLyr = new TileLayer({
+            crimeLyr = new TileLayer({
                 url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Social_Vulnerability_Index/MapServer',
                 id: "crime",
                 visible: false
             });
 
-//            console.log('roadDetailLyr = ', roadDetailLyr, ', populationLyr = ', populationLyr, ', ageLyr = ', ageLyr)
+//            console.log('populationLyr = ', populationLyr, ', ageLyr = ', ageLyr)
 
 
             /*****************************************************************
@@ -104,21 +93,17 @@
              *****************************************************************/
             var map = new Map({
                 basemap: "streets",
-                layers: [roadDetailLyr]
+                layers: []
             });
 
             /*****************************************************************
              * Or they may be added to the map using map.add()
              *****************************************************************/
-//                    map.add(roadDetailLyr);
             map.add(populationLyr);
             map.add(incomeLyr);
             map.add(ageLyr);
-            map.add(popLyr);
+            map.add(populationChangeLyr);
             map.add(crimeLyr);
-
-//            addByPortalItem(Layer, map, dom, on, "8444e275037549c1acab02d2626daaee", ppldLayerObj, ppldLayerName)
-//            addByPortalItem(Layer, map, dom, on, "eb4deb0ebcf9448495fcdc2be48ed345", medianHomeValueLyr, mediaHomeValueLayerName)
 
             var view = new SceneView({
                 container: "viewDiv",
@@ -133,7 +118,7 @@
              *****************************************************************/
             view.on("layerview-create", function (evt) {
                 if (evt.layer.id === "usa-population") {
-                    console.log("LayerView for male population created!", evt.layerView);
+                    console.log("LayerView for usa population created!", evt.layerView);
                 }
                 if (evt.layer.id === "world-streets") {
                     console.log("LayerView for streets created!", evt.layerView);
@@ -144,8 +129,8 @@
                 if (evt.layer.id === "median-age") {
                     console.log("LayerView for age created!", evt.layerView);
                 }
-                if (evt.layer.id === "pop") {
-                    console.log("LayerView for population trends created!", evt.layerView);
+                if (evt.layer.id === "pop-change") {
+                    console.log("LayerView for population change trends created!", evt.layerView);
                 }
                 if (evt.layer.id === "crime") {
                     console.log("LayerView for Crime created!", evt.layerView);
@@ -163,14 +148,12 @@
              *****************************************************************/
             view.then(function () {
                 console.log('in view.then()')
-                //view.ui.add(logo, "bottom-right");
             });
 
-            var roadDetailLyrToggle = dom.byId("roadDetailLyr");
             var incomeLyrToggle = dom.byId("incomeLyr");
             var populationLyrToggle = dom.byId("populationLyr");
             var ageLyrToggle = dom.byId("ageLyr");
-            var popLyrToggle = dom.byId("popLyr");
+            var populationChangeLyrToggle = dom.byId("populationChangeLyr");
             var crimeLyrToggle = dom.byId("crimeLyr");
 
             /*****************************************************************
@@ -179,27 +162,66 @@
              * the layer is still part of the map, which means you can access
              * its properties and perform analysis even though it isn't visible.
              *******************************************************************/
-            on(roadDetailLyrToggle, "change", function () {
-                roadDetailLyr.visible = roadDetailLyrToggle.checked;
-            });
             on(populationLyrToggle, "change", function () {
+                hideAllLayers()
                 populationLyr.visible = populationLyrToggle.checked;
+                toggleLegend('population-img')
             });
             on(ageLyrToggle, "change", function () {
+                hideAllLayers()
                 ageLyr.visible = ageLyrToggle.checked;
+                toggleLegend('age-img')
             });
             on(incomeLyrToggle, "change", function () {
+                hideAllLayers()
                 incomeLyr.visible = incomeLyrToggle.checked;
+                toggleLegend('income-img')
             });
-            on(popLyrToggle, "change", function () {
-                popLyr.visible = popLyrToggle.checked;
+            on(populationChangeLyrToggle, "change", function () {
+                hideAllLayers()
+                populationChangeLyr.visible = populationChangeLyrToggle.checked;
+                toggleLegend('population-change-img')
             });
             on(crimeLyrToggle, "change", function () {
+                hideAllLayers()
                 crimeLyr.visible = crimeLyrToggle.checked;
+                toggleLegend('crime-img')
             });
 
-
+            document.getElementById('noLyr').onchange = function() {
+                hideAllLayers()
+            }
         }
+
+        function hideAllLayers() {
+            populationLyr.visible = false;
+            ageLyr.visible = false;
+            incomeLyr.visible = false;
+            populationChangeLyr.visible = false;
+            crimeLyr.visible = false
+            hideAllImgs()
+        }
+
+        function hideAllImgs() {
+            document.getElementById('population-img').style.display = 'none'
+            document.getElementById('age-img').style.display = 'none'
+            document.getElementById('income-img').style.display = 'none'
+            document.getElementById('population-change-img').style.display = 'none'
+            document.getElementById('crime-img').style.display = 'none'
+        }
+
+        function toggleLegend(id) {
+            var elem, display;
+            elem = document.getElementById(id)
+            display = elem.style.display
+            elem.style.display = display === 'none' ? 'block' : 'none'
+            if (id !== 'population-img') document.getElementById('population-img').style.display = 'none'
+            if (id !== 'age-img') document.getElementById('age-img').style.display = 'none'
+            if (id !== 'income-img') document.getElementById('income-img').style.display = 'none'
+            if (id !== 'population-change-img') document.getElementById('population-change-img').style.display = 'none'
+            if (id !== 'crime-img') document.getElementById('crime-img').style.display = 'none'
+        }
+
         function addByPortalItem(_Layer, _map, _dom, _on, portalItemId, layerObj, layerName) {
             _Layer.fromPortalItem({
                 portalItem: {
@@ -226,18 +248,22 @@
 <div id="viewDiv"></div>
   <span id="layerToggle">
 
-    <input type="checkbox" id="populationLyr"> Population<br/>
-    <input type="checkbox" id="ageLyr"> Median Age<br/>
-    <input type="checkbox" id="incomeLyr"> Income<br/>
-    <!--<input type="checkbox" id="ppldLayerObj"> Poverty, political alignment, poverty level-->
-    <input type="checkbox" id="popLyr"> Projected Population Change<br/>
-      <!--<input type="checkbox" id="medianHomeValueLyr"> Median Home Value-->
-     <input type="checkbox" id="crimeLyr"> Crime<br/>
-    <input type="checkbox" id="roadDetailLyr"> Road Detail<br/>
+     <input type="radio" name='layer' id="noLyr" onchange="hideAllLayers()" checked> Base Map<br/>
+    <input type="radio" name='layer' id="populationLyr"> Population<br/>
+    <input type="radio" name='layer' id="ageLyr"> Median Age<br/>
+    <input type="radio" name='layer' id="incomeLyr"> Income<br/>
+    <input type="radio" name='layer' id="populationChangeLyr"> Projected Population Change<br/>
+     <input type="radio" name='layer' id="crimeLyr"> Crime<br/>
 </span>
 <div style="z-index:200; position:absolute; top:20px; left:70px;">
     <img src="../images/ten-x-logo-dark.png" border="0px" width="200px"/>
 </div>
-
+<div style="z-index:200; position:absolute; bottom:20px; right:25px;">
+    <img id='population-img' src="img/population.png" style='display: none' border="0px"/>
+    <img id='crime-img' src="img/crime.png" style='display: none' border="0px"/>
+    <img id='income-img' src="img/income.png" style='display: none' border="0px"/>
+    <img id='population-change-img' src="img/populationChange.png" style='display: none' border="0px"/>
+    <img id='age-img' src="img/age.png" style='display: none' border="0px"/>
+</div>
 </body>
 </html>
