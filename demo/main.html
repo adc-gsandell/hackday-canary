@@ -60,16 +60,16 @@
              * cached map service depicting U.S. male population and the other
              * pointing to a layer of roads and highways.
              *****************************************************************/
-            var transportationLyr = new TileLayer({
+            var roadDetailLyr = new TileLayer({
                 url: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer",
                 // This property can be used to uniquely identify the layer
                 id: "world-streets",
                 visible: true
             });
 
-            var housingLyr = new TileLayer({
+            var populationLyr = new TileLayer({
                 url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Population_Density/MapServer',
-                id: "usa-housing",
+                id: "usa-population",
                 opacity: 0.9,
                 visible: false
             });
@@ -90,8 +90,13 @@
                 id: "pop",
                 visible: false
             });
+            var crimeLyr = new TileLayer({
+                url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Social_Vulnerability_Index/MapServer',
+                id: "crime",
+                visible: false
+            });
 
-            console.log('transportationLyr = ', transportationLyr, ', housingLyr = ', housingLyr, ', ageLyr = ', ageLyr)
+//            console.log('roadDetailLyr = ', roadDetailLyr, ', populationLyr = ', populationLyr, ', ageLyr = ', ageLyr)
 
 
             /*****************************************************************
@@ -99,17 +104,18 @@
              *****************************************************************/
             var map = new Map({
                 basemap: "streets",
-                layers: [transportationLyr]
+                layers: [roadDetailLyr]
             });
 
             /*****************************************************************
              * Or they may be added to the map using map.add()
              *****************************************************************/
-//                    map.add(transportationLyr);
-            map.add(housingLyr);
+//                    map.add(roadDetailLyr);
+            map.add(populationLyr);
             map.add(incomeLyr);
             map.add(ageLyr);
             map.add(popLyr);
+            map.add(crimeLyr);
 
 //            addByPortalItem(Layer, map, dom, on, "8444e275037549c1acab02d2626daaee", ppldLayerObj, ppldLayerName)
 //            addByPortalItem(Layer, map, dom, on, "eb4deb0ebcf9448495fcdc2be48ed345", medianHomeValueLyr, mediaHomeValueLayerName)
@@ -126,25 +132,23 @@
              * take care of renderering the layers
              *****************************************************************/
             view.on("layerview-create", function (evt) {
-                if (evt.layer.id === "usa-housing") {
-                    // Explore the properties of the population layer's layer view here
+                if (evt.layer.id === "usa-population") {
                     console.log("LayerView for male population created!", evt.layerView);
                 }
                 if (evt.layer.id === "world-streets") {
-                    // Explore the properties of the transportation layer's layer view here
                     console.log("LayerView for streets created!", evt.layerView);
                 }
                 if (evt.layer.id === "usa-income") {
-                    // Explore the properties of the transportation layer's layer view here
                     console.log("LayerView for income created!", evt.layerView);
                 }
                 if (evt.layer.id === "median-age") {
-                    // Explore the properties of the transportation layer's layer view here
                     console.log("LayerView for age created!", evt.layerView);
                 }
                 if (evt.layer.id === "pop") {
-                    // Explore the properties of the transportation layer's layer view here
                     console.log("LayerView for population trends created!", evt.layerView);
+                }
+                if (evt.layer.id === "crime") {
+                    console.log("LayerView for Crime created!", evt.layerView);
                 }
                 view.goTo({
                     scale: 1000,
@@ -162,11 +166,12 @@
                 //view.ui.add(logo, "bottom-right");
             });
 
-            var transportationLyrToggle = dom.byId("transportationLyr");
+            var roadDetailLyrToggle = dom.byId("roadDetailLyr");
             var incomeLyrToggle = dom.byId("incomeLyr");
-            var housingLyrToggle = dom.byId("housingLyr");
+            var populationLyrToggle = dom.byId("populationLyr");
             var ageLyrToggle = dom.byId("ageLyr");
             var popLyrToggle = dom.byId("popLyr");
+            var crimeLyrToggle = dom.byId("crimeLyr");
 
             /*****************************************************************
              * The visible property on the layer can be used to toggle the
@@ -174,11 +179,11 @@
              * the layer is still part of the map, which means you can access
              * its properties and perform analysis even though it isn't visible.
              *******************************************************************/
-            on(transportationLyrToggle, "change", function () {
-                transportationLyr.visible = transportationLyrToggle.checked;
+            on(roadDetailLyrToggle, "change", function () {
+                roadDetailLyr.visible = roadDetailLyrToggle.checked;
             });
-            on(housingLyrToggle, "change", function () {
-                housingLyr.visible = housingLyrToggle.checked;
+            on(populationLyrToggle, "change", function () {
+                populationLyr.visible = populationLyrToggle.checked;
             });
             on(ageLyrToggle, "change", function () {
                 ageLyr.visible = ageLyrToggle.checked;
@@ -188,6 +193,9 @@
             });
             on(popLyrToggle, "change", function () {
                 popLyr.visible = popLyrToggle.checked;
+            });
+            on(crimeLyrToggle, "change", function () {
+                crimeLyr.visible = crimeLyrToggle.checked;
             });
 
 
@@ -218,14 +226,15 @@
 <div id="viewDiv"></div>
   <span id="layerToggle">
 
-    <input type="checkbox" id="transportationLyr" checked> Transportation
-    <input type="checkbox" id="housingLyr"> Housing
-    <input type="checkbox" id="ageLyr"> Median Age
-    <input type="checkbox" id="incomeLyr"> Income
+    <input type="checkbox" id="populationLyr"> Population<br/>
+    <input type="checkbox" id="ageLyr"> Median Age<br/>
+    <input type="checkbox" id="incomeLyr"> Income<br/>
     <!--<input type="checkbox" id="ppldLayerObj"> Poverty, political alignment, poverty level-->
-    <input type="checkbox" id="popLyr"> Projected Population Change
+    <input type="checkbox" id="popLyr"> Projected Population Change<br/>
       <!--<input type="checkbox" id="medianHomeValueLyr"> Median Home Value-->
- </span>
+     <input type="checkbox" id="crimeLyr"> Crime<br/>
+    <input type="checkbox" id="roadDetailLyr"> Road Detail<br/>
+</span>
 <div style="z-index:200; position:absolute; top:20px; left:70px;">
     <img src="../images/ten-x-logo-dark.png" border="0px" width="200px"/>
 </div>
