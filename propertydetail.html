@@ -875,7 +875,7 @@
                                         ng-class="{'is-selected': selectedTab === 2}" ng-click="selectedTab = 2; displayNDA();"><a>Due Diligence</a></li>
                                     <!-- 360 -->
                                     <li class="tab-strong" data-elm-id="label_data"
-                                        ng-class="{'is-selected': selectedTab === 3}" ng-click="selectedTab = 3;"><a href="arcgis-tutorial/mapview2d/housingTransAgeIncomeWithPortalIds.html" target="_blank">Market Research</a></li>
+                                        ng-class="{'is-selected': selectedTab === 3}" ng-click="selectedTab = 3;"><a>Market Research</a></li>
                                 </ul>
                             </div>
 
@@ -947,18 +947,27 @@
                                         </div>
                                 
                                     </script>
-
-
-
-
-
                                 </div>
 
                                 <div class="tab-content campTabContainer" ng-class="{'is-selected': selectedTab === 3}">
 
-                                    DATA TO DISPLAY HERE
-
-
+                                    <table cellpadding="10" cellspacing="10" border="0">
+                                        <tr>
+                                            <td align="center">
+                                                <a href="demo/main.html" target="_blank">
+                                                    <img src="images/research.png" border="0" alt="Market Research" width="200px" /><br>
+                                                    Area Analysis
+                                                </a>
+                                            </td>
+                                            <td align="center">
+                                                <a href="demo/radiusSandbox.html" target="_blank">
+                                                    <img src="images/icon_population.png" border="0" alt="Market Research" width="200px" /><br>
+                                                    Population(Radius) Analysis
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
                                 </div>
                             </div>
 
@@ -1263,7 +1272,7 @@
             <div class="list-terms" ng-if="status.showTerms">
             <div class="stat-label" data-elm-id="offer_box_list_terms_label">Seller Guidance</div>
             <div class="stat-value list-price" data-elm-id="offer_box_list_price">
-            {[{listingObject.currentListing.price | nafPrice }]}
+            $10,000,000
             </div>
             <div class="row other-terms">
             <div class="small-4 columns stat-box" ng-switch="listingObject.currentListing.due_diligence_period !== null">
