@@ -71,6 +71,11 @@
                         id: "median-age",
                         visible: false
                     });
+					var crimeLyr = new TileLayer({
+                        url: 'http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Social_Vulnerability_Index/MapServer',
+                        id: "crime",
+                        visible: false
+                    });
                     console.log('transportationLyr = ', transportationLyr, ', housingLyr = ', housingLyr, ', ageLyr = ', ageLyr)
 
 
@@ -89,6 +94,8 @@
                     map.add(housingLyr);
                     map.add(incomeLyr);
                     map.add(ageLyr);
+					map.add(crimeLyr);
+
 
                     var view = new SceneView({
                         container: "viewDiv",
@@ -118,6 +125,10 @@
                             // Explore the properties of the transportation layer's layer view here
                             console.log("LayerView for age created!", evt.layerView);
                         }
+						if (evt.layer.id === "crime") {
+                            // Explore the properties of the transportation layer's layer view here
+                            console.log("LayerView for Crime created!", evt.layerView);
+                        }
                         view.goTo({
                             scale: 1000,
                             center: [-117.735548, 33.653222]
@@ -141,6 +152,9 @@
                         });
                         ageLyr.then(function () {
                             view.goTo(ageLyr.fullExtent);
+                        });						
+                        crimeLyr.then(function () {
+                            view.goTo(crimeLyr.fullExtent);
                         });
                     });
 
@@ -148,6 +162,7 @@
                     var incomeLyrToggle = dom.byId("incomeLyr");
                     var housingLyrToggle = dom.byId("housingLyr");
                     var ageLyrToggle = dom.byId("ageLyr");
+					var crimeLyrToggle = dom.byId("crimeLyr");
 
                     /*****************************************************************
                      * The visible property on the layer can be used to toggle the
@@ -167,6 +182,9 @@
                     on(incomeLyrToggle, "change", function () {
                         incomeLyr.visible = incomeLyrToggle.checked;
                     });
+                    on(crimeLyrToggle, "change", function () {
+                        crimeLyr.visible = crimeLyrToggle.checked;
+                    });
 
                 });
     </script>
@@ -180,6 +198,8 @@
     <input type="checkbox" id="housingLyr"> Housing
     <input type="checkbox" id="ageLyr"> Median Age
     <input type="checkbox" id="incomeLyr"> Income
+    <input type="checkbox" id="crimeLyr"> Crime
+	
   </span>
 </body>
 </html>
