@@ -159,7 +159,7 @@
              *****************************************************************/
             view.then(function () {
                 console.log('in view.then()')
-                view.ui.add(logo, "bottom-right");
+                //view.ui.add(logo, "bottom-right");
             });
 
             var transportationLyrToggle = dom.byId("transportationLyr");
@@ -226,5 +226,9 @@
     <input type="checkbox" id="popLyr"> Projected Population Change
       <!--<input type="checkbox" id="medianHomeValueLyr"> Median Home Value-->
  </span>
+<div style="z-index:200; position:absolute; top:20px; left:70px;">
+    <img src="../images/ten-x-logo-dark.png" border="0px" width="200px"/>
+</div>
+
 </body>
 </html>
