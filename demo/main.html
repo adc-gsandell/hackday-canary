@@ -41,12 +41,13 @@
             "dojo/domReady!",
             "esri/symbols/SimpleMarkerSymbol",
             "esri/Graphic",
-            "esri/geometry/Point"
+            "esri/geometry/Point",
+            "esri/widgets/Home"
         ], mainApp);
 
         var populationLogo, populationLyr, incomeLyr, ageLyr, populationChangeLyr;
 
-        function mainApp(domConstruct, Map, SceneView, TileLayer, Layer, dom, on, domReady, SimpleMarkerSymbol, Graphic, Point) {
+        function mainApp(domConstruct, Map, SceneView, TileLayer, Layer, dom, on, domReady, SimpleMarkerSymbol, Graphic, Point, Home) {
 
             /*****************************************************************
              * Create two TileLayer instances. One pointing to a
@@ -85,7 +86,6 @@
 
 //            console.log('populationLyr = ', populationLyr, ', ageLyr = ', ageLyr)
 
-
             /*****************************************************************
              * Layers may be added to the map in the map's constructor
              *****************************************************************/
@@ -106,7 +106,9 @@
 
             var view = new SceneView({
                 container: "viewDiv",
-                map: map
+                map: map,
+                scale: 1000,
+                center: [-117.735548, 33.653222]
             });
 
             var sms = new SimpleMarkerSymbol();
@@ -146,11 +148,6 @@
                 if (evt.layer.id === "crime") {
                     console.log("LayerView for Crime created!", evt.layerView);
                 }
-                view.goTo({
-                    scale: 1000,
-                    center: [-117.735548, 33.653222]
-                });
-                console.log('map.extent = ' + map.extent)
              });
 
             /*****************************************************************
@@ -160,6 +157,18 @@
              *****************************************************************/
             view.then(function () {
                 console.log('in view.then()')
+                //home button location
+                var homeBtn = new Home({
+                    view: view
+
+                });
+                 view.goTo({
+                    scale: 1000,
+                    center: [-117.735548, 33.653222]
+                });
+
+                homeBtn.startup();
+                view.ui.add(homeBtn, "top-left");
             });
 
             var incomeLyrToggle = dom.byId("incomeLyr");
