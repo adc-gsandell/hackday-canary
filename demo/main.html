@@ -38,17 +38,15 @@
             "esri/layers/Layer",
             "dojo/dom",
             "dojo/on",
-            "dojo/domReady!"
+            "dojo/domReady!",
+            "esri/symbols/SimpleMarkerSymbol",
+            "esri/Graphic",
+            "esri/geometry/Point"
         ], mainApp);
 
         var populationLogo, populationLyr, incomeLyr, ageLyr, populationChangeLyr;
 
-        function mainApp(domConstruct, Map, SceneView, TileLayer, Layer, dom, on, domReadyw) {
-
-            var ppldLayerObj;   // used later
-            var ppldLayerName = 'ppld'
-            var medianHomeValueLyr;   // used later
-            var mediaHomeValueLayerName = 'mhv'
+        function mainApp(domConstruct, Map, SceneView, TileLayer, Layer, dom, on, domReady, SimpleMarkerSymbol, Graphic, Point) {
 
             /*****************************************************************
              * Create two TileLayer instances. One pointing to a
@@ -96,6 +94,7 @@
                 layers: []
             });
 
+
             /*****************************************************************
              * Or they may be added to the map using map.add()
              *****************************************************************/
@@ -107,9 +106,21 @@
 
             var view = new SceneView({
                 container: "viewDiv",
-                map: map,
-                scale: 14,
-                center: [-95.249, 38.954]
+                map: map
+            });
+
+            var sms = new SimpleMarkerSymbol();
+            view.on("click",function(evt){
+                if(evt.graphic){
+                    var content = "Value: " + evt.graphic.attributes.value;
+                    view.infoWindow.setTitle("My Graphic");
+                    view.infoWindow.setContent(content);
+                    view.infoWindow.show(evt.mapPoint);
+                } else {
+                    var point = new Point(evt.mapPoint);
+                    var attributes = {"value":"1 Mauchly Drive"};
+                    view.graphics.add(new Graphic(point,sms,attributes));
+                }
             });
 
             /*****************************************************************
@@ -139,7 +150,8 @@
                     scale: 1000,
                     center: [-117.735548, 33.653222]
                 });
-            });
+                console.log('map.extent = ' + map.extent)
+             });
 
             /*****************************************************************
              * Layers are promises that resolve when loaded, or when all their
@@ -191,6 +203,7 @@
             document.getElementById('noLyr').onchange = function() {
                 hideAllLayers()
             }
+
         }
 
         function hideAllLayers() {
@@ -246,9 +259,8 @@
 
 <body>
 <div id="viewDiv"></div>
-  <span id="layerToggle">
-
-     <input type="radio" name='layer' id="noLyr" onchange="hideAllLayers()" checked> Base Map<br/>
+<span id="layerToggle">
+    <input type="radio" name='layer' id="noLyr" onchange="hideAllLayers()" checked> Base Map<br/>
     <input type="radio" name='layer' id="populationLyr"> Population<br/>
     <input type="radio" name='layer' id="ageLyr"> Median Age<br/>
     <input type="radio" name='layer' id="incomeLyr"> Income<br/>
